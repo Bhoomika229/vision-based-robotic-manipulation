@@ -1,0 +1,392 @@
+<mujoco model="three_dof_robot_arm">
+
+    <!-- ========================================================= -->
+    <!-- Simulation settings                                       -->
+    <!-- ========================================================= -->
+
+    <option
+        gravity="0 0 -9.81"
+        timestep="0.002"/>
+
+
+    <!-- ========================================================= -->
+    <!-- Visual settings                                           -->
+    <!-- ========================================================= -->
+
+    <visual>
+        <headlight
+            ambient="0.4 0.4 0.4"
+            diffuse="0.8 0.8 0.8"
+            specular="0.2 0.2 0.2"/>
+    </visual>
+
+
+    <!-- ========================================================= -->
+    <!-- WORLD                                                     -->
+    <!-- ========================================================= -->
+
+    <worldbody>
+
+        <!-- ===================================================== -->
+        <!-- Lighting                                               -->
+        <!-- ===================================================== -->
+
+        <light
+            name="camera_light"
+            pos="0 0 5"
+            dir="0 0 -1"
+            directional="true"
+            diffuse="1 1 1"
+            specular="0.3 0.3 0.3"/>
+
+
+        <!-- ===================================================== -->
+        <!-- Vision camera                                          -->
+        <!-- ===================================================== -->
+
+        <camera
+            name="workspace_camera"
+            pos="0 0 4.5"
+            quat="1 0 0 0"
+            fovy="90"/>
+
+
+        <!-- ===================================================== -->
+        <!-- Ground                                                  -->
+        <!-- ===================================================== -->
+
+        <geom
+            name="ground"
+            type="plane"
+            size="5 5 0.1"
+            rgba="0.7 0.7 0.7 1"
+            friction="1.5 0.1 0.1"
+            condim="3"/>
+
+
+        <!-- ===================================================== -->
+        <!-- CUBE SUPPORT PLATFORM                                  -->
+        <!-- ===================================================== -->
+
+        <geom
+            name="cube_platform"
+            type="box"
+            pos="0.8 -0.7 0.01"
+            size="0.35 0.35 0.01"
+            rgba="0.45 0.45 0.45 1"
+            friction="2 0.3 0.1"
+            condim="3"/>
+
+
+        <!-- ===================================================== -->
+        <!-- ROBOT BASE                                              -->
+        <!-- ===================================================== -->
+
+        <body
+            name="base"
+            pos="0 0 0">
+
+            <geom
+                name="base_geom"
+                type="cylinder"
+                size="0.25 0.15"
+                pos="0 0 0.15"
+                rgba="0.3 0.3 0.3 1"/>
+
+
+            <!-- ================================================= -->
+            <!-- JOINT 1 + LINK 1                                   -->
+            <!-- ================================================= -->
+
+            <body
+                name="link1"
+                pos="0 0 0.3">
+
+                <joint
+                    name="joint1"
+                    type="hinge"
+                    axis="0 0 1"
+                    range="-180 180"
+                    damping="0.5"/>
+
+                <geom
+                    name="link1_geom"
+                    type="capsule"
+                    fromto="0 0 0 0.8 0 0"
+                    size="0.10"
+                    rgba="0.2 0.5 0.9 1"/>
+
+
+                <!-- ================================================= -->
+                <!-- JOINT 2 + LINK 2                                   -->
+                <!-- ================================================= -->
+
+                <body
+                    name="link2"
+                    pos="0.8 0 0">
+
+                    <joint
+                        name="joint2"
+                        type="hinge"
+                        axis="0 0 1"
+                        range="-180 180"
+                        damping="0.5"/>
+
+                    <geom
+                        name="link2_geom"
+                        type="capsule"
+                        fromto="0 0 0 0.7 0 0"
+                        size="0.09"
+                        rgba="0.2 0.7 0.4 1"/>
+
+
+                    <!-- ================================================= -->
+                    <!-- JOINT 3 + LINK 3                                   -->
+                    <!-- ================================================= -->
+
+                    <body
+                        name="link3"
+                        pos="0.7 0 0">
+
+                        <joint
+                            name="joint3"
+                            type="hinge"
+                            axis="0 0 1"
+                            range="-180 180"
+                            damping="0.5"/>
+
+                        <geom
+                            name="link3_geom"
+                            type="capsule"
+                            fromto="0 0 0 0.5 0 0"
+                            size="0.08"
+                            rgba="0.9 0.5 0.2 1"/>
+
+
+                        <!-- ================================================= -->
+                        <!-- END EFFECTOR                                      -->
+                        <!-- ================================================= -->
+
+                        <geom
+                            name="end_effector"
+                            type="sphere"
+                            pos="0.5 0 0"
+                            size="0.12"
+                            rgba="0.9 0.2 0.2 1"/>
+
+
+                        <!-- ================================================= -->
+                        <!-- GRIPPER PALM                                      -->
+                        <!-- ================================================= -->
+
+                        <body
+                            name="gripper_palm"
+                            pos="0.5 0 -0.10">
+
+                            <geom
+                                name="gripper_palm_geom"
+                                type="box"
+                                size="0.08 0.20 0.05"
+                                rgba="0.15 0.15 0.15 1"
+                                friction="2 0.2 0.1"
+                                condim="3"/>
+
+
+                            <!-- ================================================= -->
+                            <!-- VERTICAL GRIPPER SLIDE                         -->
+                            <!-- ================================================= -->
+
+                            <body
+                                name="gripper_vertical"
+                                pos="0 0 0">
+
+                                <inertial
+                                    pos="0 0 0"
+                                    mass="0.20"
+                                    diaginertia="0.001 0.001 0.001"/>
+
+                                <joint
+                                    name="gripper_vertical_joint"
+                                    type="slide"
+                                    axis="0 0 1"
+                                    range="-0.15 0.10"
+                                    limited="true"
+                                    damping="2"/>
+
+
+                                <!-- ============================================= -->
+                                <!-- FINGER ASSEMBLY                              -->
+                                <!-- ============================================= -->
+
+                                <!--
+                                    IMPORTANT:
+                                    The finger assembly is now positioned
+                                    much higher than before.
+
+                                    This is the main correction.
+                                -->
+
+                                <!-- LEFT FINGER -->
+
+                                <body
+                                    name="gripper_left"
+                                    pos="0 -0.15 -0.03">
+
+                                    <joint
+                                        name="gripper_left_joint"
+                                        type="slide"
+                                        axis="0 1 0"
+                                        range="0 0.11"
+                                        limited="true"
+                                        damping="2"/>
+
+                                    <geom
+                                        name="gripper_left_finger"
+                                        type="box"
+                                        size="0.055 0.035 0.14"
+                                        rgba="0.10 0.10 0.10 1"
+                                        mass="0.08"
+                                        friction="2.5 0.3 0.1"
+                                        condim="3"/>
+
+                                    <geom
+                                        name="gripper_left_pad"
+                                        type="box"
+                                        pos="0 0.035 -0.09"
+                                        size="0.055 0.045 0.045"
+                                        rgba="0.25 0.25 0.25 1"
+                                        friction="3 0.4 0.1"
+                                        condim="3"/>
+
+                                </body>
+
+
+                                <!-- RIGHT FINGER -->
+
+                                <body
+                                    name="gripper_right"
+                                    pos="0 0.15 -0.03">
+
+                                    <joint
+                                        name="gripper_right_joint"
+                                        type="slide"
+                                        axis="0 -1 0"
+                                        range="0 0.11"
+                                        limited="true"
+                                        damping="2"/>
+
+                                    <geom
+                                        name="gripper_right_finger"
+                                        type="box"
+                                        size="0.055 0.035 0.14"
+                                        rgba="0.10 0.10 0.10 1"
+                                        mass="0.08"
+                                        friction="2.5 0.3 0.1"
+                                        condim="3"/>
+
+                                    <geom
+                                        name="gripper_right_pad"
+                                        type="box"
+                                        pos="0 -0.035 -0.09"
+                                        size="0.055 0.045 0.045"
+                                        rgba="0.25 0.25 0.25 1"
+                                        friction="3 0.4 0.1"
+                                        condim="3"/>
+
+                                </body>
+
+                            </body>
+
+                        </body>
+
+                    </body>
+
+                </body>
+
+            </body>
+
+        </body>
+
+
+        <!-- ===================================================== -->
+        <!-- RED TARGET CUBE                                        -->
+        <!-- ===================================================== -->
+
+        <body
+            name="target_object"
+            pos="0.8 -0.7 0.25">
+
+            <freejoint/>
+
+            <geom
+                name="target_object_geom"
+                type="box"
+                size="0.12 0.12 0.12"
+                rgba="1 0 0 1"
+                mass="0.5"
+                friction="2.5 0.3 0.1"
+                condim="3"/>
+
+        </body>
+
+
+    </worldbody>
+
+
+    <!-- ========================================================= -->
+    <!-- ACTUATORS                                                 -->
+    <!-- ========================================================= -->
+
+    <actuator>
+
+        <motor
+            name="motor1"
+            joint="joint1"
+            gear="50"/>
+
+        <motor
+            name="motor2"
+            joint="joint2"
+            gear="40"/>
+
+        <motor
+            name="motor3"
+            joint="joint3"
+            gear="30"/>
+
+
+        <motor
+            name="gripper_left_motor"
+            joint="gripper_left_joint"
+            gear="20"/>
+
+        <motor
+            name="gripper_right_motor"
+            joint="gripper_right_joint"
+            gear="20"/>
+
+
+        <motor
+            name="gripper_vertical_motor"
+            joint="gripper_vertical_joint"
+            gear="50"/>
+
+    </actuator>
+    
+        <!-- ========================================================= -->
+    <!-- GRASP CONSTRAINT                                          -->
+    <!-- ========================================================= -->
+
+    <equality>
+
+        <weld
+            name="grasp_weld"
+            body1="gripper_palm"
+            body2="target_object"
+            active="false"
+            solref="0.01 1"
+            solimp="0.9 0.95 0.001"/>
+
+    </equality>
+
+</mujoco>
